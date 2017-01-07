@@ -41,6 +41,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String KEY_TRANSACTION_TYPE = "transaction_type";
     private static final String KEY_NET_DUE_AMOUNT = "net_due_amount";
     private static final String KEY_DUE_AMOUNT = "due_amount";
+    private static final String KEY_CREDIT_TYPE = "creditType";
 
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -53,7 +54,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // table query
         String CREATE_PAYABLE_TABLE = "CREATE TABLE " + TABLE_PAYABLE + "("
                 + KEY_USER_ID + " INTEGER PRIMARY KEY," + KEY_FNAME + " TEXT," + KEY_LNAME + " TEXT," + KEY_PH_NO + " TEXT," + KEY_AMOUNT + " TEXT," + KEY_DATE + " TEXT,"
-                + KEY_ADDRESS + " TEXT" + ")";
+                + KEY_ADDRESS + " TEXT," +KEY_CREDIT_TYPE + " TEXT"+ ")";
         String CREATE_TRANSACTION_TABLE = "CREATE TABLE " + TABLE_TRANSACTIONS + "("
                 + KEY_TRANSACTION_ID + " INTEGER PRIMARY KEY," + KEY_USER_ID + " INTEGER," + KEY_TRANSACTION_TYPE +
                 " TEXT," + KEY_AMOUNT + " TEXT," + KEY_DATE + " TEXT," + KEY_DUE_AMOUNT + " TEXT," + KEY_NET_DUE_AMOUNT + " TEXT" + ")";
@@ -66,10 +67,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     // Upgrading database
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Drop older table if existed
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PAYABLE);
-        // Create tables again
-        onCreate(db);
+            // Drop older table if existed
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_PAYABLE);
+            // Create tables again
+            onCreate(db);
     }
 
     // doing transaction
@@ -85,6 +86,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_DATE, transaction.getDate()); // Contact Last Name
         values.put(KEY_DUE_AMOUNT, transaction.getDueAmount()); // Contact Last Name
         values.put(KEY_NET_DUE_AMOUNT, transaction.getNetDueAmount()); // Contact Last Name
+        values.put(KEY_CREDIT_TYPE,transaction.getCreditType()); // assigning the creditType to table
 
         // Inserting Row
         db.insert(TABLE_TRANSACTIONS, null, values);
@@ -131,9 +133,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             db.close(); // Closing database connection
             return true;
         } else {
-
             return false;
-
         }
     }
 
@@ -171,13 +171,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     // Getting All Contacts
-    public List<AddPayableHelper> getAllPayables() {
+    public List<AddPayableHelper> getAllPayables(String credit_type) {
         List<AddPayableHelper> payerList = new ArrayList<AddPayableHelper>();
         // Select All Query
-        String selectQuery = "SELECT  * FROM " + TABLE_PAYABLE;
+        String selectQuery = "SELECT  * FROM " + TABLE_TRANSACTIONS + " WHERE " + KEY_CREDIT_TYPE + " =?";
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{credit_type});
 
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
