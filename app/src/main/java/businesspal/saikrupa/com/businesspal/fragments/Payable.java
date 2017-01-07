@@ -45,6 +45,7 @@ public class Payable extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getActivity(), AddNewPayable.class);
+                i.putExtra("transaction_type","payable");
                 startActivity(i);
             }
         });
@@ -67,7 +68,7 @@ public class Payable extends Fragment {
 
     private void loadData() {
         Log.d("Reading: ", "Reading all contacts..");
-        List<AddPayableHelper> liPayable = db.getAllPayables();
+        List<AddPayableHelper> liPayable = db.getAllPayables("payable");
         mAdapter = new PayableListAdapter(liPayable, getActivity());
         rvPayableList.setAdapter(mAdapter);
 
@@ -78,8 +79,6 @@ public class Payable extends Fragment {
             // Writing Contacts to log
             Log.d("Name: ", log);
         }
-
-
     }
 
 }

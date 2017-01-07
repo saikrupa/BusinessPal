@@ -29,13 +29,15 @@ public class AddNewPayable extends AppCompatActivity {
     EditText etPhoneNo;
     EditText etAmount;
     TextView tvDate;
-
+    String creditType;
     DatabaseHandler db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new_payable);
+        savedInstanceState=getIntent().getExtras();
+        creditType=savedInstanceState.getString("transaction_type");
         initialize();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -65,7 +67,7 @@ public class AddNewPayable extends AppCompatActivity {
         String date = tvDate.getText().toString();
 
         if (fname.length() > 0 && lname.length() > 0 && address.length() > 0 && amount.length() > 0 && phoneNo.length() > 0 && !date.equals("Date")) {
-            boolean is_inserted = db.addPayable(new AddPayableHelper(new String[]{fname, lname, phoneNo, amount, address, date}));
+            boolean is_inserted = db.addPayable(new AddPayableHelper(new String[]{fname, lname, phoneNo, amount, address, date,creditType}));
             if (is_inserted) {
                 Toast.makeText(getApplicationContext(), "updated successfully", Toast.LENGTH_SHORT).show();
                 //db.addAmount(new AddTransaction(new String[]{user_id+"",tag,amount,"26-12-2016",dueAmount+"",totalAmount+""}));

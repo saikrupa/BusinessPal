@@ -17,7 +17,7 @@ public class AddTransaction {
     int date = 3;
     int due_amount = 4;
     int net_due_amount = 5;
-    int credit_type=6;
+
     String[] transactionData;
 
     public AddTransaction() {
@@ -85,9 +85,7 @@ public class AddTransaction {
     public void setDueAmount(String dueAmount) {
         this.transactionData[this.due_amount] = dueAmount;
     }
-    public String getCreditType(){
-       return transactionData[credit_type];
-    }
+
     public String getNetDueAmount() {
         return transactionData[net_due_amount];
     }

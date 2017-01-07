@@ -13,6 +13,7 @@ public class AddPayableHelper {
     int payable_amout = 3;
     int payable_address = 4;
     int payable_date = 5;
+    int credit_type=6;
     String[] payableData;
 
     public AddPayableHelper() {
@@ -98,6 +99,8 @@ public class AddPayableHelper {
     public void setDate(String date) {
         payableData[payable_date] = date;
     }
-
+    public String getCreditType(){
+        return payableData[credit_type];
+    }
 
 }

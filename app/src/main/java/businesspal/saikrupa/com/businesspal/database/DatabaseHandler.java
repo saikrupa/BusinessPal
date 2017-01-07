@@ -86,7 +86,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_DATE, transaction.getDate()); // Contact Last Name
         values.put(KEY_DUE_AMOUNT, transaction.getDueAmount()); // Contact Last Name
         values.put(KEY_NET_DUE_AMOUNT, transaction.getNetDueAmount()); // Contact Last Name
-        values.put(KEY_CREDIT_TYPE,transaction.getCreditType()); // assigning the creditType to table
 
         // Inserting Row
         db.insert(TABLE_TRANSACTIONS, null, values);
@@ -127,6 +126,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_ADDRESS, payableHelper.getAddress()); // Contact Last Name
         values.put(KEY_AMOUNT, payableHelper.getAmount()); // Contact Last Name
         values.put(KEY_DATE, payableHelper.getDate()); // Contact Last Name
+        values.put(KEY_CREDIT_TYPE,payableHelper.getCreditType()); // assigning the creditType to table
+
         if (!hasObject(payableHelper.getPhoneNo())) {
             // Inserting Row
             db.insert(TABLE_PAYABLE, null, values);
@@ -174,12 +175,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public List<AddPayableHelper> getAllPayables(String credit_type) {
         List<AddPayableHelper> payerList = new ArrayList<AddPayableHelper>();
         // Select All Query
-        String selectQuery = "SELECT  * FROM " + TABLE_TRANSACTIONS + " WHERE " + KEY_CREDIT_TYPE + " =?";
+        String selectQuery = "SELECT  * FROM " + TABLE_PAYABLE + " WHERE " + KEY_CREDIT_TYPE + " =?";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, new String[]{credit_type});
 
-        // looping through all rows and adding to list
+        // looping through all rows and adding to list s
         if (cursor.moveToFirst()) {
             do {
                 // Adding contact to list

@@ -50,7 +50,6 @@ public class PayableListAdapter extends RecyclerView.Adapter {
         RecyclerView.ViewHolder vh;
         View v = LayoutInflater.from(parent.getContext()).inflate(
                 R.layout.payable_list_item, parent, false);
-
         vh = new PayableListItemsViewHolder(v);
         return vh;
     }
