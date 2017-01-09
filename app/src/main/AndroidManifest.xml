@@ -17,13 +17,15 @@
         </activity>
         <activity
             android:name=".LoginScreen"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden"/>
         <activity
             android:name=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".AddNewPayable"
-            android:theme="@style/AppTheme.NoActionBar" />.
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden"/>
         <activity
             android:name=".Transactions"
             android:theme="@style/AppTheme.NoActionBar" />

@@ -2,23 +2,27 @@ package businesspal.saikrupa.com.businesspal;
 
 
 import android.app.DatePickerDialog;
+import android.content.ContentProviderClient;
+import android.content.ContentResolver;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 import businesspal.saikrupa.com.businesspal.database.DatabaseHandler;
 import businesspal.saikrupa.com.businesspal.helper.AddPayableHelper;
@@ -38,13 +42,15 @@ public class AddNewPayable extends AppCompatActivity {
     TextView tvDate;
     String creditType;
     DatabaseHandler db;
+    private ArrayList<Map<String, String>> mPeopleList;
+    private SimpleAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new_payable);
-        savedInstanceState=getIntent().getExtras();
-        creditType=savedInstanceState.getString("transaction_type");
+        savedInstanceState = getIntent().getExtras();
+        creditType = savedInstanceState.getString("transaction_type");
         initialize();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -62,8 +68,10 @@ public class AddNewPayable extends AppCompatActivity {
         etAmount = (EditText) findViewById(R.id.etAmount);
         tvDate = (TextView) findViewById(R.id.tvDate);
         db = new DatabaseHandler(AddNewPayable.this);
+        mPeopleList = new ArrayList<>();
+        PopulatePeopleList();
 
-        actvPhoneNo.setAdapter(new ArrayAdapter<String>(getApplicationContext(), R.layout.single_contact, R.id.tv_ContactNumber, getAllContactNames()));
+        actvPhoneNo.setAdapter(new ArrayAdapter<>(getApplicationContext(), R.layout.single_contact, R.id.tv_ContactNumber, PopulatePeopleList()));
 
     }
 
@@ -76,7 +84,7 @@ public class AddNewPayable extends AppCompatActivity {
         String date = tvDate.getText().toString();
 
         if (fname.length() > 0 && lname.length() > 0 && address.length() > 0 && amount.length() > 0 && phoneNo.length() > 0 && !date.equals("Date")) {
-            boolean is_inserted = db.addPayable(new AddPayableHelper(new String[]{fname, lname, phoneNo, amount, address, date,creditType}));
+            boolean is_inserted = db.addPayable(new AddPayableHelper(new String[]{fname, lname, phoneNo, amount, address, date, creditType}));
             if (is_inserted) {
                 Toast.makeText(getApplicationContext(), "updated successfully", Toast.LENGTH_SHORT).show();
                 //db.addAmount(new AddTransaction(new String[]{user_id+"",tag,amount,"26-12-2016",dueAmount+"",totalAmount+""}));
@@ -121,21 +129,37 @@ public class AddNewPayable extends AppCompatActivity {
 
     }
 
-    private List<String> getAllContactNames() {
-        List<String> lContactNamesList = new ArrayList<>();
+
+    public List<String> PopulatePeopleList() {
+        mPeopleList.clear();
+        List<String> lContactNumberList = new ArrayList<>();
         try {
-            // Get all Contacts
-            Cursor lPeople = getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
-            if (lPeople != null) {
-                while (lPeople.moveToNext()) {
-                    // Add Contact's Name into the List
-                    lContactNamesList.add(lPeople.getString(lPeople.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)));
-                }
+            ContentResolver cResolver = getContentResolver();
+            ContentProviderClient mCProviderClient = cResolver.acquireContentProviderClient(ContactsContract.Contacts.CONTENT_URI);
+            String[] projection = {ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.NUMBER};
+            Cursor people = mCProviderClient.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, projection, null, null, null);
+            while (people.moveToNext()) {
+                String phoneNumber = people.getString(people.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                phoneNumber=phoneNumber.replace("+91","");
+                if(!lContactNumberList.contains(phoneNumber))
+                    lContactNumberList.add(phoneNumber);
             }
-        } catch (NullPointerException e) {
-            Log.e("getAllContactNames()", e.getMessage());
+            people.close();
+        } catch (RemoteException e1) {
+            e1.printStackTrace();
         }
-        return lContactNamesList;
+
+        return lContactNumberList;
     }
+
+   /* public void onItemClick(AdapterView<?> av, View v, int index, long arg){
+        Map<String, String> map = (Map<String, String>) av.getItemAtPosition(index);
+        Iterator<String> myVeryOwnIterator = map.keySet().iterator();
+        while(myVeryOwnIterator.hasNext()) {
+            String key=(String)myVeryOwnIterator.next();
+            String value=(String)map.get(key);
+            actvPhoneNo.setText(value);
+        }
+    }*/
 
 }
