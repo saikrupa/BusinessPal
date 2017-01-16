@@ -29,6 +29,9 @@
         <activity
             android:name=".Transactions"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="businesspal.saikrupa.com.businesspal.helper.PieChartActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

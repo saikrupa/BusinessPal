@@ -22,5 +22,8 @@
     <string name="loan">Loan</string>
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
+    <string name="delete">Delete</string>
+    <string name="copy">Copy</string>
+    <string name="forward">Forward</string>
 
 </resources>

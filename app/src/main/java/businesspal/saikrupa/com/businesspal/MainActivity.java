@@ -3,6 +3,7 @@ package businesspal.saikrupa.com.businesspal;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -22,7 +23,7 @@ public class MainActivity extends AppCompatActivity
 
     private ViewPager viewPager;
     private TabLayout tabLayout;
-
+    private static ViewPagerAdapter adapter;
     //FloatingActionButton fab;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,13 +58,16 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new DashBoard(), "DashBoard");
         adapter.addFragment(new Payable(), "Payable");
         adapter.addFragment(new Receivable(), "Receivable");
         viewPager.setAdapter(adapter);
     }
-
+    //Return current fragment on basis of Position
+    public Fragment getFragment(int pos) {
+        return adapter.getItem(pos);
+    }
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

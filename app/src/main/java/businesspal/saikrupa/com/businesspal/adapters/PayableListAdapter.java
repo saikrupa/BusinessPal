@@ -2,7 +2,9 @@ package businesspal.saikrupa.com.businesspal.adapters;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,10 +25,13 @@ public class PayableListAdapter extends RecyclerView.Adapter {
     private List<AddPayableHelper> payableList;
     // instance of the main class will be stored here
     private Activity _context;
+    private SparseBooleanArray mSelectedItemsIds;
 
     public PayableListAdapter(List<AddPayableHelper> payableList, Activity context) {
         this.payableList = payableList;
         _context = context;
+        mSelectedItemsIds = new SparseBooleanArray();
+
     }
 
     @Override
@@ -40,7 +45,9 @@ public class PayableListAdapter extends RecyclerView.Adapter {
         viewHolder.tvPhoneNo.setText(singlePayableDetails.getPhoneNo());
         viewHolder.tvDate.setText(singlePayableDetails.getDate());
         viewHolder.tvAddress.setText(singlePayableDetails.getAddress());
-
+        viewHolder.itemView
+                .setBackgroundColor(mSelectedItemsIds.get(position) ? 0x9934B5E4
+                        : Color.TRANSPARENT);
         viewHolder.payableItem = singlePayableDetails;
 
     }
@@ -58,6 +65,44 @@ public class PayableListAdapter extends RecyclerView.Adapter {
     public int getItemCount() {
         return payableList.size();
     }
+
+
+    //Toggle selection methods
+    public void toggleSelection(int position) {
+        selectView(position, !mSelectedItemsIds.get(position));
+    }
+
+
+    //Remove selected selections
+    public void removeSelection() {
+        mSelectedItemsIds = new SparseBooleanArray();
+        notifyDataSetChanged();
+    }
+
+
+    //Put or delete selected position into SparseBooleanArray
+    public void selectView(int position, boolean value) {
+        if (value)
+            mSelectedItemsIds.put(position, value);
+        else
+            mSelectedItemsIds.delete(position);
+
+        notifyDataSetChanged();
+    }
+
+    //Get total selected count
+    public int getSelectedCount() {
+        return mSelectedItemsIds.size();
+    }
+
+    //Return all selected ids
+    public SparseBooleanArray getSelectedIds() {
+        return mSelectedItemsIds;
+    }
+
+
+
+
 
     private class PayableListItemsViewHolder extends RecyclerView.ViewHolder {
 
