@@ -4,7 +4,11 @@ package businesspal.saikrupa.com.businesspal.helper;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import businesspal.saikrupa.com.businesspal.R;
 
@@ -14,7 +18,7 @@ import businesspal.saikrupa.com.businesspal.R;
  * 
  * @author Philipp Jahoda
  */
-public abstract class DemoBase extends FragmentActivity {
+public abstract class DemoBase extends Fragment {
 
     protected String[] mMonths = new String[] {
             "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"
@@ -30,21 +34,30 @@ public abstract class DemoBase extends FragmentActivity {
     protected Typeface mTfRegular;
     protected Typeface mTfLight;
 
-    @Override
+    /*@Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mTfRegular = Typeface.createFromAsset(getAssets(), "OpenSans-Regular.ttf");
         mTfLight = Typeface.createFromAsset(getAssets(), "OpenSans-Light.ttf");
+    }*/
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        mTfRegular = Typeface.createFromAsset(getActivity().getAssets(), "OpenSans-Regular.ttf");
+        mTfLight = Typeface.createFromAsset(getActivity().getAssets(), "OpenSans-Light.ttf");
+
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     protected float getRandom(float range, float startsfrom) {
         return (float) (Math.random() * range) + startsfrom;
     }
 
-    @Override
+   /* @Override
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.move_left_in_activity, R.anim.move_right_out_activity);
-    }
+    }*/
 }

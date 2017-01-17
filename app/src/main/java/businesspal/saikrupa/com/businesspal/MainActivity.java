@@ -17,6 +17,7 @@ import businesspal.saikrupa.com.businesspal.adapters.ViewPagerAdapter;
 import businesspal.saikrupa.com.businesspal.fragments.DashBoard;
 import businesspal.saikrupa.com.businesspal.fragments.Payable;
 import businesspal.saikrupa.com.businesspal.fragments.Receivable;
+import businesspal.saikrupa.com.businesspal.helper.PieChartActivity;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -59,7 +60,7 @@ public class MainActivity extends AppCompatActivity
 
     private void setupViewPager(ViewPager viewPager) {
         adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new DashBoard(), "DashBoard");
+        adapter.addFragment(new PieChartActivity(), "DashBoard");
         adapter.addFragment(new Payable(), "Payable");
         adapter.addFragment(new Receivable(), "Receivable");
         viewPager.setAdapter(adapter);

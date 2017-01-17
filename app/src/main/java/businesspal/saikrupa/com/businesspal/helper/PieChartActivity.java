@@ -4,13 +4,15 @@ package businesspal.saikrupa.com.businesspal.helper;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -32,30 +34,27 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import java.util.ArrayList;
 
 import businesspal.saikrupa.com.businesspal.R;
+import businesspal.saikrupa.com.businesspal.database.DatabaseHandler;
 
-public class PieChartActivity extends DemoBase implements OnSeekBarChangeListener,
-        OnChartValueSelectedListener {
+public class PieChartActivity extends DemoBase implements OnChartValueSelectedListener {
 
     private PieChart mChart;
-    private SeekBar mSeekBarX, mSeekBarY;
-    private TextView tvX, tvY;
+    DatabaseHandler db;
+
+
+    public PieChartActivity(){
+
+    }
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View v=inflater.inflate(R.layout.activity_piechart, container, false);
+        getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_piechart);
 
-        tvX = (TextView) findViewById(R.id.tvXMax);
-        tvY = (TextView) findViewById(R.id.tvYMax);
 
-        mSeekBarX = (SeekBar) findViewById(R.id.seekBar1);
-        mSeekBarY = (SeekBar) findViewById(R.id.seekBar2);
-        mSeekBarX.setProgress(4);
-        mSeekBarY.setProgress(10);
-
-        mChart = (PieChart) findViewById(R.id.chart1);
+        mChart = (PieChart) v.findViewById(R.id.chart1);
         mChart.setUsePercentValues(true);
         mChart.getDescription().setEnabled(false);
         mChart.setExtraOffsets(5, 10, 5, 5);
@@ -64,6 +63,7 @@ public class PieChartActivity extends DemoBase implements OnSeekBarChangeListene
 
         mChart.setCenterTextTypeface(mTfLight);
         mChart.setCenterText(generateCenterSpannableText());
+
 
         mChart.setDrawHoleEnabled(true);
         mChart.setHoleColor(Color.WHITE);
@@ -92,8 +92,7 @@ public class PieChartActivity extends DemoBase implements OnSeekBarChangeListene
         mChart.animateY(1400, Easing.EasingOption.EaseInOutQuad);
         // mChart.spin(2000, 0, 360);
 
-        mSeekBarX.setOnSeekBarChangeListener(this);
-        mSeekBarY.setOnSeekBarChangeListener(this);
+
 
         Legend l = mChart.getLegend();
         l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
@@ -108,85 +107,17 @@ public class PieChartActivity extends DemoBase implements OnSeekBarChangeListene
         mChart.setEntryLabelColor(Color.WHITE);
         mChart.setEntryLabelTypeface(mTfRegular);
         mChart.setEntryLabelTextSize(12f);
+        return v;
     }
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.pie, menu);
+        getActivity().getMenuInflater().inflate(R.menu.pie, menu);
         return true;
-    }
+    }*/
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
 
-        switch (item.getItemId()) {
-            case R.id.actionToggleValues: {
-                for (IDataSet<?> set : mChart.getData().getDataSets())
-                    set.setDrawValues(!set.isDrawValuesEnabled());
 
-                mChart.invalidate();
-                break;
-            }
-            case R.id.actionToggleHole: {
-                if (mChart.isDrawHoleEnabled())
-                    mChart.setDrawHoleEnabled(false);
-                else
-                    mChart.setDrawHoleEnabled(true);
-                mChart.invalidate();
-                break;
-            }
-            case R.id.actionDrawCenter: {
-                if (mChart.isDrawCenterTextEnabled())
-                    mChart.setDrawCenterText(false);
-                else
-                    mChart.setDrawCenterText(true);
-                mChart.invalidate();
-                break;
-            }
-            case R.id.actionToggleXVals: {
-
-                mChart.setDrawEntryLabels(!mChart.isDrawEntryLabelsEnabled());
-                mChart.invalidate();
-                break;
-            }
-            case R.id.actionSave: {
-                // mChart.saveToGallery("title"+System.currentTimeMillis());
-                mChart.saveToPath("title" + System.currentTimeMillis(), "");
-                break;
-            }
-            case R.id.actionTogglePercent:
-                mChart.setUsePercentValues(!mChart.isUsePercentValuesEnabled());
-                mChart.invalidate();
-                break;
-            case R.id.animateX: {
-                mChart.animateX(1400);
-                break;
-            }
-            case R.id.animateY: {
-                mChart.animateY(1400);
-                break;
-            }
-            case R.id.animateXY: {
-                mChart.animateXY(1400, 1400);
-                break;
-            }
-            case R.id.actionToggleSpin: {
-                mChart.spin(1000, mChart.getRotationAngle(), mChart.getRotationAngle() + 360, Easing.EasingOption
-                        .EaseInCubic);
-                break;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-        tvX.setText("" + (mSeekBarX.getProgress()));
-        tvY.setText("" + (mSeekBarY.getProgress()));
-
-        setData(mSeekBarX.getProgress(), mSeekBarY.getProgress());
-    }
 
     private void setData(int count, float range) {
 
@@ -194,13 +125,20 @@ public class PieChartActivity extends DemoBase implements OnSeekBarChangeListene
 
         ArrayList<PieEntry> entries = new ArrayList<PieEntry>();
 
+
+
+        entries.add(new PieEntry((float) 24.5, "Payable"));
+        entries.add(new PieEntry((float) 75.5, "Receivable"));
+
+
+
         // NOTE: The order of the entries when being added to the entries array determines their position around the center of
         // the chart.
-        for (int i = 0; i < count ; i++) {
+        /*for (int i = 0; i < count ; i++) {
             entries.add(new PieEntry((float) ((Math.random() * mult) + mult / 5), mParties[i % mParties.length]));
-        }
+        }*/
 
-        PieDataSet dataSet = new PieDataSet(entries, "Election Results");
+        PieDataSet dataSet = new PieDataSet(entries, "Financial Statistics");
         dataSet.setSliceSpace(3f);
         dataSet.setSelectionShift(5f);
 
@@ -208,7 +146,7 @@ public class PieChartActivity extends DemoBase implements OnSeekBarChangeListene
 
         ArrayList<Integer> colors = new ArrayList<Integer>();
 
-        for (int c : ColorTemplate.VORDIPLOM_COLORS)
+        /*for (int c : ColorTemplate.VORDIPLOM_COLORS)
             colors.add(c);
 
         for (int c : ColorTemplate.JOYFUL_COLORS)
@@ -221,9 +159,10 @@ public class PieChartActivity extends DemoBase implements OnSeekBarChangeListene
             colors.add(c);
 
         for (int c : ColorTemplate.PASTEL_COLORS)
-            colors.add(c);
+            colors.add(c);*/
 
-        colors.add(ColorTemplate.getHoloBlue());
+        colors.add(Color.rgb(51, 181, 229));
+        colors.add(Color.rgb(99 , 51, 230));
 
         dataSet.setColors(colors);
         //dataSet.setSelectionShift(0f);
@@ -243,13 +182,14 @@ public class PieChartActivity extends DemoBase implements OnSeekBarChangeListene
 
     private SpannableString generateCenterSpannableText() {
 
-        SpannableString s = new SpannableString("MPAndroidChart\ndeveloped by Philipp Jahoda");
-        s.setSpan(new RelativeSizeSpan(1.7f), 0, 14, 0);
-        s.setSpan(new StyleSpan(Typeface.NORMAL), 14, s.length() - 15, 0);
-        s.setSpan(new ForegroundColorSpan(Color.GRAY), 14, s.length() - 15, 0);
-        s.setSpan(new RelativeSizeSpan(.8f), 14, s.length() - 15, 0);
+        SpannableString s = new SpannableString("Statistics");
+        s.setSpan(new RelativeSizeSpan(1.7f), 0, 10, 0);
+
+        s.setSpan(new StyleSpan(Typeface.NORMAL), 0, s.length(), 0);
+        s.setSpan(new ForegroundColorSpan(Color.GRAY), 0, s.length(), 0);
+        /*s.setSpan(new RelativeSizeSpan(.8f), 14, s.length() - 15, 0);
         s.setSpan(new StyleSpan(Typeface.ITALIC), s.length() - 14, s.length(), 0);
-        s.setSpan(new ForegroundColorSpan(ColorTemplate.getHoloBlue()), s.length() - 14, s.length(), 0);
+        s.setSpan(new ForegroundColorSpan(ColorTemplate.getHoloBlue()), s.length() - 14, s.length(), 0);*/
         return s;
     }
 
@@ -268,15 +208,5 @@ public class PieChartActivity extends DemoBase implements OnSeekBarChangeListene
         Log.i("PieChart", "nothing selected");
     }
 
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-        // TODO Auto-generated method stub
 
-    }
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
-        // TODO Auto-generated method stub
-
-    }
 }
